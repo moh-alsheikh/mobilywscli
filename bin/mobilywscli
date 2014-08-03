@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'commander/import'
+require 'terminal-notifier'
+require 'mobilywscli'
+
+program :version, '0.0.1'
+program :description, 'CLI FOR MOBILY SMS'
+
+command :status do |c|
+  c.syntax = 'status'
+  c.description = 'Displays mobilyws gateway status'
+  c.action do |args, options|
+    print_header
+    say Mobilywscli.send_status
+    print_footer
+    TerminalNotifier.notify("#{Mobilywscli.current_result_message}", :title => 'Mobily SMS - Status')
+  end
+end
+
+command :balance do |c|
+  c.syntax = 'balance'
+  c.description = 'Displays current balance'
+  c.action do |args, options|
+    print_header
+    say Mobilywscli.get_balance
+    print_footer
+    TerminalNotifier.notify("#{Mobilywscli.current_result_message}", :title => 'Mobily SMS - Balance')
+  end
+end
+
+command :sendsms do |c|
+  c.syntax = 'type sendsms and press enter key and follow the prompt'
+  c.description = 'Send a new sms message'
+  c.action do |args, options|
+    print_header
+    numbers = ask("Numbers: ")
+    message = ask("Message: ")
+    say Mobilywscli.send(numbers,message)
+    print_footer
+    TerminalNotifier.notify("#{Mobilywscli.current_result_message}", :title => 'Mobily SMS - Send SMS') 
+  end
+end
+
+def print_header
+  puts "\n\n\n||||||||||||||||||    Welcome to Mobily SMS Gateway!    ||||||||||||||||||\n\n\n"
+end
+
+def print_footer
+  puts "\n\n\n"
+end
