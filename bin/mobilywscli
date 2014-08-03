@@ -7,6 +7,17 @@ require 'mobilywscli'
 
 program :version, '0.0.1'
 program :description, 'CLI FOR MOBILY SMS'
+default_command :welcome
+
+command :welcome do |c|
+  c.syntax = 'status'
+  c.description = 'Displays welcome message'
+  c.action do |args, options|
+    print_header
+    print_footer
+    TerminalNotifier.notify("Welcome to Mobily SMS", :title => 'Mobily SMS - Welcome')
+  end
+end
 
 command :status do |c|
   c.syntax = 'status'
