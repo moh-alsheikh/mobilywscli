@@ -29,15 +29,15 @@ module Mobilywscli
   
   def Mobilywscli.setup(muname, mpassword, msender)
     
-      yml_content = YAML.load_file(SETTING_FILE_PATH)
+      mobily_credential_yaml = YAML.load_file(SETTING_FILE_PATH)
     
-      yml_content['mobily_username'] = muname.to_s
-      yml_content['mobily_password'] = mpassword.to_s
-      yml_content['mobily_sender'] = msender.to_s
+      mobily_credential_yaml['mobily_username'] = muname.to_s
+      mobily_credential_yaml['mobily_password'] = mpassword.to_s
+      mobily_credential_yaml['mobily_sender'] = msender.to_s
       
       begin
         File.open(SETTING_FILE_PATH,'w') do |h| 
-          h.write yml_content.to_yaml
+          h.write mobily_credential_yaml.to_yaml
         end
       rescue SystemCallError
         raise StandardError

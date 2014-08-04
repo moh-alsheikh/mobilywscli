@@ -21,41 +21,8 @@ command :setup do |c|
   c.syntax = 'type setup and press enter key and follow the prompt'
   c.description = 'Add mobilyws login information >> username - password - sender   <<  '
   c.action do |args, options|
-    
-    print_header
-    
-    #username = ask("USERNAME: ")
-    #password = ask("PASSWORD: ")
-    #sender = ask("SENDER: ")
-    
-     #Mobilywscli::Settings.mobily_username= ask("USERNAME: ")
-     #Mobilywscli::Settings.mobily_password= ask("PASSWORD: ")
-     #Mobilywscli::Settings.mobily_sender= ask("SENDER: ")
-          
-     #yml_content = YAML.load_file("/settings.yml")
-     
-     
-     say Mobilywscli.setup( ask("USERNAME: "), ask("PASSWORD: "),  ask("SENDER: "))
-     
-     #yml_content['language'] = "ARABIC"
-     
-     #puts yml_content['mobily_username']
-     
-     #File.open("../settings.yml", 'w') { |f| YAML.dump(yml_content, f) }
-     
-     #File.open('settings.yml','w') do |h| 
-        #h.write yml_content.to_yaml
-     #end
-     
-    #configatron.mobily_username = ask("USERNAME: ")
-    #configatron.mobily_password = ask("PASSWORD: ")
-    #configatron.mobily_sender = ask("SENDER: ")
-    
-    
-    #say "#{Mobilywscli::Settings.mobily_username} ||||||||   #{Mobilywscli::Settings.mobily_password}     ||||||||||||    #{Mobilywscli::Settings.mobily_sender}"
-    
-    
-    #say "Done!"
+    print_header 
+    say Mobilywscli.setup( ask("USERNAME: "), ask("PASSWORD: "),  ask("SENDER: "))
     print_footer
   end
 end
