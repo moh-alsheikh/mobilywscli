@@ -5,14 +5,14 @@ require "mobilywscli/version"
 require 'net/https'
 require 'net/http'
 require 'open-uri'
+require 'yaml'
+require 'mobilywscli'
 
 module Mobilywscli
   
   API_BASE_URI = "http://mobily.ws/api/"
+  SETTING_FILE_PATH = File.join(File.dirname(__FILE__),"settings.yaml")
   
-  USERNAME  = ENV['MOBILYWS_USERNAME']
-  PASSWORD  = ENV['MOBILYWS_PASSWORD']
-  SENDER  = ENV['MOBILYWS_SENDER']
   
   class << self; attr_accessor :current_result_message; end
   
@@ -27,9 +27,52 @@ module Mobilywscli
   
   #============================================
   
+  def Mobilywscli.setup(muname, mpassword, msender)
+    
+      yml_content = YAML.load_file(SETTING_FILE_PATH)
+    
+      yml_content['mobily_username'] = muname.to_s
+      yml_content['mobily_password'] = mpassword.to_s
+      yml_content['mobily_sender'] = msender.to_s
+      
+      begin
+        File.open(SETTING_FILE_PATH,'w') do |h| 
+          h.write yml_content.to_yaml
+        end
+      rescue SystemCallError
+        raise StandardError
+      end
+    
+        
+  end
+  
+  
+  #============================================
+  
+  #============================================
+  
+  # Get current mobily setting 
+  def Mobilywscli.get_mobily_credential
+    
+    mobily_credential = []
+    mobily_credential_yaml = YAML.load_file(SETTING_FILE_PATH)
+   
+    mobily_credential.push(mobily_credential_yaml['mobily_username'], mobily_credential_yaml['mobily_password'], mobily_credential_yaml['mobily_sender'])
+    
+    return mobily_credential
+  end
+  
+  
+  
+  #============================================
+  
   # Check for balance
   def Mobilywscli.get_balance
-    url = URI.parse("#{API_BASE_URI}balance.php?mobile=#{USERNAME}&password=#{PASSWORD}")
+    
+    yml_content = YAML.load_file(SETTING_FILE_PATH)
+      
+    url = URI.parse("#{API_BASE_URI}balance.php?mobile=#{get_mobily_credential[0]}&password=#{get_mobily_credential[1]}")
+    
     result = result_messages(Net::HTTP.get(url), 1)
     Mobilywscli.current_result_message = result
   end
@@ -41,7 +84,7 @@ module Mobilywscli
     
     message = convert_to_unicode(message)
     
-    url = URI.parse(URI.encode("#{API_BASE_URI}msgSend.php?mobile=#{USERNAME}&password=#{PASSWORD}&numbers=#{numbers}&msg=#{message}&sender=#{SENDER}&applicationType=24"))
+    url = URI.parse(URI.encode("#{API_BASE_URI}msgSend.php?mobile=#{get_mobily_credential[0]}&password=#{get_mobily_credential[1]}&numbers=#{numbers}&msg=#{message}&sender=#{get_mobily_credential[2]}&applicationType=24"))
   
     result = result_messages(Net::HTTP.get(url), 2)
     
@@ -297,10 +340,15 @@ chrarray = {
 end
 
 __END__
+  
+  
+
+  USERNAME  = ENV['MOBILYWS_USERNAME']
+  PASSWORD  = ENV['MOBILYWS_PASSWORD']
+  SENDER  = ENV['MOBILYWS_SENDER']
+  
+  #url = URI.parse("#{API_BASE_URI}balance.php?mobile=#{USERNAME}&password=#{PASSWORD}")
 
   export MOBILYWS_USERNAME="966566666666"
-  
-  export MOBILYWS_PASSWORD="8223510"
-  
+  export MOBILYWS_PASSWORD="966566666666"
   export MOBILYWS_SENDER="MOHAMMED"
-  
