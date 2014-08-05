@@ -68,7 +68,7 @@ Send a new sms message:
     
 ### Service status
 
-Check mobilyws statsu:
+Check mobilyws status:
 
     $ mobilywscli status
 
