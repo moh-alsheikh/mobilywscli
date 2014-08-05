@@ -18,9 +18,11 @@ Or install it yourself as:
 
 ## Usage
 
+First You will need to register for account at Mobily https://mobily.ws/sms/index.php?id=2
+
 ### Setup 
 
-Add Mobilyws credentials (username - password - sender):
+Add Mobilyws credentials (username - password - sender) 
 
     $ mobilywscli setup
 
