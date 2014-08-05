@@ -1,4 +1,6 @@
-# Mobilywscli
+[icon]: https://mobily.ws/images/logo.png
+
+# Mobilyws CLI
 
  A command-line tool for Mobilyws. http://mobily.ws/ 
  
