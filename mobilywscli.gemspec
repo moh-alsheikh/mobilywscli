@@ -6,9 +6,7 @@ require 'mobilywscli/version'
 Gem::Specification.new do |spec|
   spec.name          = "mobilywscli"
   spec.add_dependency 'commander', '~> 4.2'
-  spec.add_dependency 'configatron', '~> 4.2'
-  
-  
+  spec.add_dependency 'configatron', '~> 4.2'  
   
   spec.version       = Mobilywscli::VERSION
   spec.authors       = ["Mohammed AlSheikh"]

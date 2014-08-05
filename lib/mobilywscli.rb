@@ -13,22 +13,20 @@ module Mobilywscli
   API_BASE_URI = "http://mobily.ws/api/"
   SETTING_FILE_PATH = File.join(File.dirname(__FILE__),"settings.yaml")
   
-  
-  class << self; attr_accessor :current_result_message; end
-  
-  #============================================
-  
-  # Check for mobilyws gateway status
-  def Mobilywscli.send_status
-    url = URI.parse("#{API_BASE_URI}sendStatus.php")
-    result = result_messages(Net::HTTP.get(url), 0)
-    Mobilywscli.current_result_message = result
-  end
-  
-  #============================================
-  
-  def Mobilywscli.setup(muname, mpassword, msender)
+  class << self
     
+    attr_accessor :current_result_message
+ 
+    #============================================
+    # Check for mobilyws gateway status
+    def send_status
+      url = URI.parse("#{API_BASE_URI}sendStatus.php")
+      current_result_message = result_messages(Net::HTTP.get(url), 0)
+    end
+  
+    #============================================
+    # Add & modify mobily credentials
+    def setup(muname, mpassword, msender)
       mobily_credential_yaml = YAML.load_file(SETTING_FILE_PATH)
     
       mobily_credential_yaml['mobily_username'] = muname.to_s
@@ -43,131 +41,112 @@ module Mobilywscli
         raise StandardError
       end
     
-        
-  end
-  
-  
-  #============================================
-  
-  #============================================
-  
-  # Get current mobily setting 
-  def Mobilywscli.get_mobily_credential
-    
-    mobily_credential = []
-    mobily_credential_yaml = YAML.load_file(SETTING_FILE_PATH)
-   
-    mobily_credential.push(mobily_credential_yaml['mobily_username'], mobily_credential_yaml['mobily_password'], mobily_credential_yaml['mobily_sender'])
-    
-    return mobily_credential
-  end
-  
-  
-  
-  #============================================
-  
-  # Check for balance
-  def Mobilywscli.get_balance
-    
-    yml_content = YAML.load_file(SETTING_FILE_PATH)
-      
-    url = URI.parse("#{API_BASE_URI}balance.php?mobile=#{get_mobily_credential[0]}&password=#{get_mobily_credential[1]}")
-    
-    result = result_messages(Net::HTTP.get(url), 1)
-    Mobilywscli.current_result_message = result
-  end
-  
-  #============================================
-  
-  # Send message
-  def Mobilywscli.send(numbers, message)
-    
-    message = convert_to_unicode(message)
-    
-    url = URI.parse(URI.encode("#{API_BASE_URI}msgSend.php?mobile=#{get_mobily_credential[0]}&password=#{get_mobily_credential[1]}&numbers=#{numbers}&msg=#{message}&sender=#{get_mobily_credential[2]}&applicationType=24"))
-  
-    result = result_messages(Net::HTTP.get(url), 2)
-    
-    Mobilywscli.current_result_message = result
-       
-  end
-  
-  #============================================
-  
-  # Result messages handler
-  def Mobilywscli.result_messages(q, op_type)
-    
-    # Get current sttaus of mobily gateway
-    if op_type == 0
-      
-      if q == '1'
-        result = "خدمة الإرسال متوفرة الآن ويمكن إرسال الرسائل"      
-      else
-        result = "خدمة الإرسال غير متوفرة الآن"
-      end
-    
-    # Get current balance
-    elsif op_type == 1 
-      
-      case q
-      when '1'
-        result = "إسم المستخدم غير صحيح فضلا تأكد من أن إسم المستخدم هو نفس الإسم الذي تستخدمه عن الدخول إلى موقع موبايلي"
-      when '2'
-        result = "كلمة المرور غير صحيحه فضلا تأكد من أن كلمة المرور هو نفسها التي تستخدمها عن الدخول إلى موقع موبايلي"
-      when '-1'
-        result = " لم يتم التواصل مع خادم (Server) الإرسال موبايلي بنجاح. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
-      when '-2'
-        result = " لم يتم الربط مع قاعدة البيانات (Database) التي تحتوي على حسابك وبياناتك لدى موبايلي. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
-      else
-        current_balance = q.split('/')
-        result = "Mobily current balance: #{current_balance[1]} of #{current_balance[0]}"
-      end
-    
-      # Send message  
-    elsif op_type == 2
-      
-      case q
-      when '1'
-        result = "تم إرسال الرسالة بنجاح"
-      when '2'
-        result = "الرصيد = 0"
-      when '3'
-        result = "الرصيد غير كافي"
-      when '4'
-        result = "رقم الجوال غير متوفر"
-      when '5'
-        result = "كلمة المرور خاطئة"
-      when '6'
-        result = "صفحة الإنترنت غير فعالة ، حاول الإرسال من جديد"
-      when '13'
-        result = "أسم المرسل غير مقبول"
-      when '14'
-        result = "إسم المرسل المستخدم غير فعال"
-      when '15'
-        result = "الأرقام المرسل لها غير صحيحية أو فارغة"
-      when '16'
-        result = "إسم المرسل فارغ"
-      when '17'
-        result = "نص الرسالة غير مشفر بالشكل الصحيح "
-      when '-1'
-        result = " لم يتم الربط مع قاعدة البيانات (Database) التي تحتوي على حسابك وبياناتك لدى موبايلي. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
-      when '-2'
-        result = " لم يتم التواصل مع خادم (Server) الإرسال موبايلي بنجاح. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
-      else
-        result = q
-      end
-      
     end
+    
+    #============================================
+    # Get current mobily setting 
+    def get_mobily_credential(credential_type)
+      mobily_credential_yaml = YAML.load_file(SETTING_FILE_PATH)
+      
+      case credential_type
+        when :username then  return mobily_credential_yaml['mobily_username']
+        when :password then  return mobily_credential_yaml['mobily_password']
+        when :sender then  return mobily_credential_yaml['mobily_sender']
+        else return "unknown request"
+      end
+ 
+    end
+    
+    #============================================
+    # Check for balance
+    def get_balance
+      url = URI.parse("#{API_BASE_URI}balance.php?mobile=#{get_mobily_credential(:username)}&password=#{get_mobily_credential(:password)}")
+      current_result_message = result_messages(Net::HTTP.get(url), 1)
+    end
+  
+    #============================================
+    # Send message
+    def send(numbers, message)
+      message = convert_to_unicode(message)
+      url = URI.parse(URI.encode("#{API_BASE_URI}msgSend.php?mobile=#{get_mobily_credential(:username)}&password=#{get_mobily_credential(:password)}&numbers=#{numbers}&msg=#{message}&sender=#{get_mobily_credential(:sender)}&applicationType=24"))
+      current_result_message = result_messages(Net::HTTP.get(url), 2)
+    end
+  
+    #============================================
+    # Result messages handler
+    def result_messages(q, op_type)
+    
+      # Get current sttaus of mobily gateway
+      if op_type == 0
+      
+        if q == '1'
+          result = "خدمة الإرسال متوفرة الآن ويمكن إرسال الرسائل"      
+        else
+          result = "خدمة الإرسال غير متوفرة الآن"
+        end
+    
+        # Get current balance
+      elsif op_type == 1 
+      
+        case q
+        when '1'
+          result = "إسم المستخدم غير صحيح فضلا تأكد من أن إسم المستخدم هو نفس الإسم الذي تستخدمه عن الدخول إلى موقع موبايلي"
+        when '2'
+          result = "كلمة المرور غير صحيحه فضلا تأكد من أن كلمة المرور هو نفسها التي تستخدمها عن الدخول إلى موقع موبايلي"
+        when '-1'
+          result = " لم يتم التواصل مع خادم (Server) الإرسال موبايلي بنجاح. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
+        when '-2'
+          result = " لم يتم الربط مع قاعدة البيانات (Database) التي تحتوي على حسابك وبياناتك لدى موبايلي. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
+        else
+          current_balance = q.split('/')
+          result = "Mobily current balance: #{current_balance[1]} of #{current_balance[0]}"
+        end
+    
+        # Send message  
+      elsif op_type == 2
+      
+        case q
+        when '1'
+          result = "تم إرسال الرسالة بنجاح"
+        when '2'
+          result = "الرصيد = 0"
+        when '3'
+          result = "الرصيد غير كافي"
+        when '4'
+          result = "رقم الجوال غير متوفر"
+        when '5'
+          result = "كلمة المرور خاطئة"
+        when '6'
+          result = "صفحة الإنترنت غير فعالة ، حاول الإرسال من جديد"
+        when '13'
+          result = "أسم المرسل غير مقبول"
+        when '14'
+          result = "إسم المرسل المستخدم غير فعال"
+        when '15'
+          result = "الأرقام المرسل لها غير صحيحية أو فارغة"
+        when '16'
+          result = "إسم المرسل فارغ"
+        when '17'
+          result = "نص الرسالة غير مشفر بالشكل الصحيح "
+        when '-1'
+          result = " لم يتم الربط مع قاعدة البيانات (Database) التي تحتوي على حسابك وبياناتك لدى موبايلي. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
+        when '-2'
+          result = " لم يتم التواصل مع خادم (Server) الإرسال موبايلي بنجاح. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
+        else
+          result = q
+        end
+      
+      end
       
     
-  end
+    end
  
-  #============================================
+    #============================================
   
-  def Mobilywscli.convert_to_unicode(message)
+    def convert_to_unicode(message)
     
 chrarray = {
-  
+
 "،" => "060D" ,
 "؛"=> "061B",
 "؟"=> "061F",
@@ -317,38 +296,29 @@ chrarray = {
 "§"=> "00A7",
 "\r"=> "000A",
 " " => "0020"
-        
-        }
-        
-        result = ''
+
+  }
+
+      result = ''
           
-        message.chars.to_a.map { |x|
-          if chrarray.has_key?(x)
-            result += chrarray[x]    	
-          else
-            x
-          end	
+      message.chars.to_a.map { |x|
+        if chrarray.has_key?(x)
+          result += chrarray[x]    	
+        else
+          x
+        end	
   
-        }.join
+      }.join
           
-        result
+      result
         
+    end
+  
+    #============================================
+  
   end
-  
-  
-  #============================================
+   
 end
 
 __END__
   
-  
-
-  USERNAME  = ENV['MOBILYWS_USERNAME']
-  PASSWORD  = ENV['MOBILYWS_PASSWORD']
-  SENDER  = ENV['MOBILYWS_SENDER']
-  
-  #url = URI.parse("#{API_BASE_URI}balance.php?mobile=#{USERNAME}&password=#{PASSWORD}")
-
-  export MOBILYWS_USERNAME="966566666666"
-  export MOBILYWS_PASSWORD="966566666666"
-  export MOBILYWS_SENDER="MOHAMMED"

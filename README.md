@@ -1,7 +1,7 @@
 # Mobilywscli
 
-TODO: Write a gem description
-
+ A command-line tool for Mobilyws. http://mobily.ws/ 
+ 
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -18,7 +18,24 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Setup 
+
+Add Mobilyws credentials (username - password - sender):
+
+    $ mobilywscli setup
+
+### Balance 
+
+Print current balance:
+
+    $ mobilywscli balance
+    
+### Send SMS 
+
+Send a new sms message:
+
+    $ mobilywscli sendsms
+
 
 ## Contributing
 

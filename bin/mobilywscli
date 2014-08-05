@@ -69,6 +69,3 @@ end
 
 
 __END__
-    system "export MOBILYWS_USERNAME=#{username}"
-    system "export MOBILYWS_PASSWORD=#{password}"
-    system "export MOBILYWS_SENDER=#{sender}"
