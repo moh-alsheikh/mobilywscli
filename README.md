@@ -35,7 +35,12 @@ Print current balance:
 Send a new sms message:
 
     $ mobilywscli sendsms
+    
+### Service status
 
+Check mobilyws statsu:
+
+    $ mobilywscli status
 
 ## Contributing
 
