@@ -80,58 +80,58 @@ module Mobilywscli
       if op_type == 0
       
         if q == '1'
-          result = "خدمة الإرسال متوفرة الآن ويمكن إرسال الرسائل"      
+          result = "Service is available"      
         else
-          result = "خدمة الإرسال غير متوفرة الآن"
+          result = "Service is not available"
         end
     
-        # Get current balance
+      # Get current balance
       elsif op_type == 1 
       
         case q
         when '1'
-          result = "إسم المستخدم غير صحيح فضلا تأكد من أن إسم المستخدم هو نفس الإسم الذي تستخدمه عن الدخول إلى موقع موبايلي"
+          result = "username is incorrect, please make sure that the username is the same name that you use to access mobily.ws"
         when '2'
-          result = "كلمة المرور غير صحيحه فضلا تأكد من أن كلمة المرور هو نفسها التي تستخدمها عن الدخول إلى موقع موبايلي"
+          result = "password is incorrect, please make sure that the password is the same passowrd that you use to access mobily.ws"
         when '-1'
-          result = " لم يتم التواصل مع خادم (Server) الإرسال موبايلي بنجاح. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
+          result = "Communication with Server Failed."
         when '-2'
-          result = " لم يتم الربط مع قاعدة البيانات (Database) التي تحتوي على حسابك وبياناتك لدى موبايلي. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
+          result = "Communication with Database Failed."
         else
           current_balance = q.split('/')
           result = "Mobily current balance: #{current_balance[1]} of #{current_balance[0]}"
         end
     
-        # Send message  
+      # Send message  
       elsif op_type == 2
       
         case q
         when '1'
-          result = "تم إرسال الرسالة بنجاح"
+          result = "Message has been sent successfully."
         when '2'
-          result = "الرصيد = 0"
+          result = "Balance = 0"
         when '3'
-          result = "الرصيد غير كافي"
+          result = "insufficient balance"
         when '4'
-          result = "رقم الجوال غير متوفر"
+          result = "Mobile Number Not Available"
         when '5'
-          result = "كلمة المرور خاطئة"
+          result = "Password is incorrect"
         when '6'
-          result = "صفحة الإنترنت غير فعالة ، حاول الإرسال من جديد"
+          result = "Web page ineffective, try sending again"
         when '13'
-          result = "أسم المرسل غير مقبول"
+          result = "The sender name is not acceptable"
         when '14'
-          result = "إسم المرسل المستخدم غير فعال"
+          result = "The sender name is not active"
         when '15'
-          result = "الأرقام المرسل لها غير صحيحية أو فارغة"
+          result = "Invalid or empty numbers"
         when '16'
-          result = "إسم المرسل فارغ"
+          result = "Sender name is empty"
         when '17'
-          result = "نص الرسالة غير مشفر بالشكل الصحيح "
+          result = "The text of the message is not encrypted properly"
         when '-1'
-          result = " لم يتم الربط مع قاعدة البيانات (Database) التي تحتوي على حسابك وبياناتك لدى موبايلي. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
+          result = "Communication with Database Failed."
         when '-2'
-          result = " لم يتم التواصل مع خادم (Server) الإرسال موبايلي بنجاح. (قد يكون هناك محاولات إرسال كثيرة تمت معا , أو قد يكون هناك عطل مؤقت طرأ على الخادم إذا إستمرت المشكلة يرجى التواصل مع الدعم الفني)"
+          result = "Communication with Server Failed."
         else
           result = q
         end
