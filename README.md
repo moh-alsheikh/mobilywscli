@@ -1,3 +1,4 @@
+# [![Application icon](https://mobily.ws/images/logo.png)][icon]
 [icon]: https://mobily.ws/images/logo.png
 
 # Mobilyws CLI
